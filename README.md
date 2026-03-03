@@ -1,5 +1,9 @@
 # Smart City Heatmap
 
+## 🎥 Demo Video
+
+Projekt si môžete pozrieť vo videu na YouTube:  
+👉 https://youtu.be/MFtIvfLTrg0
 
 ## Deployment overview
 

@@ -13,6 +13,8 @@
 
 ## About the project
 
+This project was developed as a **school project** under **Siemens Healthineers**, with mentors from **Siemens** and **TUKE** (Technical University of Košice).
+
 Smart City Heatmap is a web application that uses interactive heatmaps to make it easier to **find a place to be**—whether you are looking for a spot to live, work, or visit—or to **find accommodation to buy or rent**. The heatmap visualizes data (e.g. livability, amenities, safety, or similar) so you can quickly see which areas match your needs.
 
 ## My contribution

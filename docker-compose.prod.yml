@@ -1,0 +1,54 @@
+services:
+  # Frontend service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        - NODE_ENV=production
+    image: ${DOCKER_REGISTRY:-ghcr.io}/${DOCKER_IMAGE_PREFIX:-smart-city}/frontend:${IMAGE_TAG:-latest}
+    container_name: smart-city-frontend
+    restart: unless-stopped
+    expose:
+      - "80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - app-network
+
+  # Backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    image: ${DOCKER_REGISTRY:-ghcr.io}/${DOCKER_IMAGE_PREFIX:-smart-city}/backend:${IMAGE_TAG:-latest}
+    container_name: smart-city-backend
+    restart: unless-stopped
+    expose:
+      - "8000"
+    environment:
+      # Required by your FastAPI settings (.env.example / README)
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+
+      PROJECT_NAME: ${PROJECT_NAME:-Smart City Heatmap API}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      SECRET_KEY: ${SECRET_KEY}
+
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost:5173}
+      API_V1_STR: ${API_V1_STR:-/api/v1}
+
+      # Optional / nice-to-have
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    networks:
+      - app-network
+
+volumes:
+  nginx_logs:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,56 @@
+# Multi-stage build for production frontend
+# Stage 1: Build the React app
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+# Install build dependencies for native modules (lightningcss)
+RUN apk add --no-cache python3 make g++
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies with clean install for reproducible builds
+# Use npm install to include optional dependencies (npm ci doesn't support --include flag)
+RUN npm install --include=optional && \
+    npm rebuild lightningcss --force && \
+    npm cache clean --force
+
+# Copy all source files
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# Stage 2: Serve with nginx
+FROM nginx:1.27-alpine
+
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
+# Copy built assets from build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.default.conf /etc/nginx/conf.d/default.conf
+
+# Create nginx cache directories
+RUN mkdir -p /var/cache/nginx/client_temp && \
+    mkdir -p /var/cache/nginx/proxy_temp && \
+    mkdir -p /var/cache/nginx/fastcgi_temp && \
+    mkdir -p /var/cache/nginx/uwsgi_temp && \
+    mkdir -p /var/cache/nginx/scgi_temp && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:80/ || exit 1
+
+# Run nginx
+CMD ["nginx", "-g", "daemon off;"]

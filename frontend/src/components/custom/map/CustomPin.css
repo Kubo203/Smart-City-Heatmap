@@ -1,0 +1,135 @@
+/* CustomPin.css */
+.center-pin-container {
+  background: none !important;
+  border: none !important;
+}
+
+.center-pin {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.center-pin:hover {
+  transform: scale(1.5);
+  z-index: 1000 !important;
+}
+
+/* Pin SVG */
+.center-pin .center-pin-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.center-pin:hover .center-pin-svg {
+  filter: drop-shadow(0 0 12px var(--pin-color, #7dba74))
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Center dot */
+.center-pin .center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--pin-color, #7dba74);
+  border: 2px solid white;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Label */
+.center-pin .center-label {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 1000;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.center-pin:hover .center-label {
+  opacity: 1;
+}
+
+/* Glow effect */
+.center-pin::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(
+    circle at center,
+    var(--pin-color, #7dba74) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.center-pin:hover::before {
+  opacity: 0.2;
+}
+
+/* Pulsing rings */
+.center-pin .pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--pin-color, #7dba74);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.center-pin.pulse .ring-1 {
+  width: 150%;
+  height: 150%;
+  animation: center-pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.center-pin.pulse .ring-2 {
+  width: 150%;
+  height: 150%;
+  animation: center-pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: 0.5s;
+}
+
+/* Pulse animation */
+@keyframes center-pulse-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}

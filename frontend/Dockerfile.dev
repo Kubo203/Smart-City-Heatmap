@@ -1,0 +1,38 @@
+# Development Dockerfile for React app with Vite and hot reload
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code (excluding node_modules due to .dockerignore)
+COPY . .
+
+# Expose the port that Vite dev server runs on
+EXPOSE 3000
+
+# Set environment variables for Vite
+ENV VITE_HOST=0.0.0.0
+ENV VITE_PORT=3000
+
+# Create an entrypoint script to reinstall dependencies if needed
+RUN echo '#!/bin/sh' > /entrypoint.sh && \
+    echo 'if [ ! -d "node_modules" ] || [ ! -f "node_modules/.package-lock.json" ] || [ ! -d "node_modules/@hookform/resolvers" ] || [ ! -f "node_modules/lightningcss/lightningcss.linux-arm64-musl.node" ]; then' >> /entrypoint.sh && \
+    echo '  echo "Installing dependencies in volume..."' >> /entrypoint.sh && \
+    echo '  rm -rf node_modules package-lock.json 2>/dev/null || true' >> /entrypoint.sh && \
+    echo '  npm install --force' >> /entrypoint.sh && \
+    echo '  echo "Ensuring optional native dependencies..."' >> /entrypoint.sh && \
+    echo '  npm install @rollup/rollup-linux-arm64-musl --save-optional 2>/dev/null || true' >> /entrypoint.sh && \
+    echo '  cd node_modules/lightningcss && npm install --force 2>/dev/null || true && cd /app' >> /entrypoint.sh && \
+    echo 'fi' >> /entrypoint.sh && \
+    echo 'exec "$@"' >> /entrypoint.sh && \
+    chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Start the Vite development server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]

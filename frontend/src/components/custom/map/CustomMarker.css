@@ -1,0 +1,293 @@
+.leaflet-custom-marker-container {
+  background: none !important;
+  border: none !important;
+  pointer-events: auto !important;
+}
+
+.leaflet-custom-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transform: none !important;
+  pointer-events: auto !important;
+}
+
+.leaflet-custom-marker .pin-visual {
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hover on pin-visual triggers scale animation */
+.leaflet-custom-marker .pin-visual:hover {
+  transform: scale(1.5);
+  z-index: 10000 !important; /* Increased z-index on hover */
+}
+
+/* When pin-visual is hovered, bring parent marker to front */
+.leaflet-custom-marker .pin-visual:hover ~ .marker-label,
+.leaflet-custom-marker:hover .pin-visual:hover ~ .marker-label {
+  opacity: 1;
+}
+
+.leaflet-custom-marker .pin-visual:hover ~ .marker-label {
+  opacity: 1;
+}
+
+.leaflet-custom-marker .pin-visual:hover + .marker-label {
+  opacity: 1;
+}
+
+.leaflet-custom-marker .pin-visual:hover {
+  z-index: 1000;
+}
+
+/* Pin SVG - bottom layer */
+.leaflet-custom-marker .marker-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: all 0.25s ease;
+  z-index: 10; /* Base layer for the pin */
+}
+
+/* Hover effect on marker-svg when pin-visual is hovered */
+.leaflet-custom-marker .pin-visual:hover .marker-svg {
+  filter: drop-shadow(0 0 12px var(--marker-color, #3b82f6))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* White circle background - middle layer */
+.leaflet-custom-marker .icon-background {
+  position: absolute;
+  top: 40%; /* Adjust based on pin shape - not 50% */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px white;
+  z-index: 50;
+}
+
+/* Icon container - top layer */
+.leaflet-custom-marker .icon-container {
+  position: absolute;
+  top: 40%; /* Same as icon-background */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  border-radius: 50%;
+  z-index: 100;
+  font-size: calc(var(--marker-size, 36px) * 0.25); /* For number display */
+  font-weight: bold;
+  color: black;
+}
+/* Label - even higher when visible */
+.leaflet-custom-marker .marker-label {
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 500; /* Higher than the pin/icon when visible */
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+  min-width: max-content;
+}
+
+/* Show label when pin-visual is hovered */
+.leaflet-custom-marker .pin-visual:hover + .marker-label,
+.leaflet-custom-marker .pin-visual:hover ~ .marker-label {
+  opacity: 1;
+}
+
+/* Glow effect - behind everything */
+.leaflet-custom-marker::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% * 1.3);
+  height: calc(100% * 1.3);
+  background: radial-gradient(
+    circle at center,
+    var(--marker-color, #3b82f6) 0%,
+    transparent 50%
+  );
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 1; /* Behind everything */
+}
+
+/* Show glow when pin-visual is hovered */
+.leaflet-custom-marker .pin-visual:hover ~ .marker-label,
+.leaflet-custom-marker:hover .pin-visual:hover::before,
+.leaflet-custom-marker .pin-visual:hover::before {
+  opacity: 0.3;
+}
+
+/* Pulse animation */
+@keyframes marker-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 8px var(--marker-color, #3b82f6))
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+}
+
+.leaflet-custom-marker.pulse .marker-svg {
+  animation: marker-pulse 2s ease-in-out infinite;
+}
+/* Add to CustomMarker.css */
+/* Add to CustomMarker.css */
+
+/* Hover spiderfy animation */
+@keyframes hoverSpread {
+  0% {
+    transform: translate(var(--fan-x, 0), var(--fan-y, 0)) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(var(--fan-x, 0), var(--fan-y, 0)) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Spiderfied markers on hover */
+.leaflet-spiderfied-marker {
+  animation: hoverSpread 0.3s ease-out forwards;
+  z-index: 1000 !important;
+}
+
+/* Stagger the animations for fan effect */
+.leaflet-spiderfied-marker {
+  animation-delay: calc(var(--marker-index, 0) * 0.05s);
+}
+
+/* Cluster icon hover effect */
+.cluster-marker:hover {
+  transform: scale(1.2);
+  transition: transform 0.2s ease;
+}
+
+.cluster-marker:hover .marker-svg {
+  filter: drop-shadow(0 0 12px var(--marker-color, #3b82f6))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+/* When spiderfied, individual markers should have hover effects */
+.leaflet-spiderfied-marker:hover {
+  transform: translate(var(--fan-x, 0), calc(var(--fan-y, 0) - 10px)) scale(1.2) !important;
+  z-index: 2000 !important;
+  transition: transform 0.2s ease;
+}
+
+.leaflet-spiderfied-marker:hover .marker-label {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(-5px) !important;
+}
+
+/* Remove spider legs */
+.leaflet-spider-leg,
+.leaflet-overlay-pane .leaflet-spider-leg-pane {
+  display: none !important;
+}
+
+/* Cluster glow on hover */
+.cluster-marker::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130%;
+  height: 130%;
+  background: radial-gradient(
+    circle at center,
+    var(--marker-color, #3b82f6) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cluster-marker:hover::before {
+  opacity: 0.3;
+}
+
+/* Add pulsing animation to indicate hoverability */
+@keyframes clusterPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 8px var(--marker-color, #3b82f6))
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  }
+}
+
+.cluster-marker {
+  animation: clusterPulse 3s ease-in-out infinite;
+  z-index: 1000 !important;
+}
+
+.cluster-marker:hover {
+  animation: none; /* Stop pulsing when hovered */
+}
+
+.cluster-count {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 100;
+}
+
+/* Add this to prevent marker overlap in expanded view */
+.leaflet-custom-marker-container.expanded-marker {
+  z-index: 1000 !important;
+}
+
+.leaflet-custom-marker.expanded {
+  pointer-events: auto !important;
+  z-index: 1000 !important;
+}
+
+/* Ensure markers don't overlap by adding a minimum spacing */
+@media (min-resolution: 150dpi) {
+  .leaflet-custom-marker {
+    min-width: 30px;
+    min-height: 30px;
+  }
+}

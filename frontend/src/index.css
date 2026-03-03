@@ -1,0 +1,151 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* 
+  Define your design tokens using Tailwind v4's @theme syntax.
+  These values become available as Tailwind variables automatically.
+*/
+
+@theme {
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+
+  /* Colors — light mode */
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.145 0 0);
+
+  --color-primary: #0074e8;
+  --color-primary-foreground: white;
+
+  --color-secondary: oklch(0.95 0 0);
+  --color-secondary-foreground: oklch(0.25 0 0);
+
+  --color-muted: oklch(0.97 0 0);
+  --color-muted-foreground: oklch(0.45 0 0);
+
+  --color-border: oklch(0.9 0 0);
+  --color-input: oklch(0.9 0 0);
+  --color-ring: oklch(0.7 0 0);
+
+  /* Charts or accent colors if needed */
+  --color-accent: oklch(0.95 0 0);
+  --color-accent-foreground: oklch(0.25 0 0);
+}
+
+/* Define dark theme overrides */
+@theme .dark {
+  --color-background: oklch(0.145 0 0);
+  --color-foreground: oklch(0.985 0 0);
+
+  --color-primary: #60a5fa; /* lighter blue for dark mode */
+  --color-primary-foreground: oklch(0.145 0 0);
+
+  --color-secondary: oklch(0.27 0 0);
+  --color-secondary-foreground: oklch(0.985 0 0);
+
+  --color-muted: oklch(0.27 0 0);
+  --color-muted-foreground: oklch(0.7 0 0);
+
+  --color-border: oklch(1 0 0 / 0.1);
+  --color-input: oklch(1 0 0 / 0.15);
+  --color-ring: oklch(0.556 0 0);
+}
+
+/* Apply Tailwind's base layer styling */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html,
+  body {
+    @apply w-full h-full bg-red-200 text-background antialiased;
+  }
+}
+
+.leaflet-control-zoom {
+  height: fit-content;
+}
+
+.leaflet-control-attribution {
+  height: fit-content;
+}
+
+/* 
+ * Constrain react-globe.gl nested divs to container size
+ * 
+ * react-globe.gl creates nested divs for its Three.js scene structure:
+ * - Globe wrapper div
+ * - Scene container div (contains Three.js scene)
+ * - Canvas wrapper div
+ * - Canvas element (the actual rendering surface)
+ * 
+ * These divs are necessary for the library to function properly.
+ * We constrain them to prevent overflow and ensure proper sizing.
+ */
+#globe-container > div,
+#globe-container > div > div,
+#globe-container > div > div > div,
+#globe-container > div > div > div > div {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+/* Ensure canvas respects container size and is visible */
+#globe-container canvas {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+.pulsating-marker-container {
+  background: none !important;
+  border: none !important;
+}
+
+.pulsating-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulsating-dot {
+  border-radius: 50%;
+  z-index: 2;
+  position: relative;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.pulsating-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid;
+  width: 100%;
+  height: 100%;
+  animation: pulse 2s ease-out infinite;
+  opacity: 0;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
